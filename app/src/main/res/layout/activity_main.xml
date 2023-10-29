@@ -12,11 +12,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="52dp"
-        android:layout_marginTop="24dp"
-        android:layout_marginBottom="419dp"
+        android:layout_marginTop="25dp"
+        android:layout_marginBottom="29dp"
         android:text="Date: XX/XX/XXXX"
         android:textSize="20sp"
-        app:layout_constraintBottom_toTopOf="@+id/additionEditText"
+        app:layout_constraintBottom_toTopOf="@+id/textView1"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -25,40 +25,43 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="51dp"
-        android:layout_marginTop="36dp"
+        android:layout_marginBottom="29dp"
         android:text="Dear Diary ..."
         android:textSize="20sp"
+        app:layout_constraintBottom_toTopOf="@+id/textView2"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/dateTextView" />
-
-    <TextView
-        android:id="@+id/textView2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="1dp"
-        android:text="I slept X hours and XX minutes."
-        android:textSize="20sp"
-        app:layout_constraintBottom_toTopOf="@+id/textView3"
-        app:layout_constraintStart_toStartOf="@+id/textView3" />
 
     <TextView
         android:id="@+id/textView3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="51dp"
-        android:layout_marginTop="56dp"
+        android:layout_marginTop="8dp"
         android:text="My sleep quality is X."
         android:textSize="20sp"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView2" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="1dp"
+        android:layout_marginBottom="1dp"
+        android:text="I slept X hours and XX minutes."
+        android:textSize="20sp"
+        app:layout_constraintBottom_toTopOf="@+id/textView3"
+        app:layout_constraintStart_toStartOf="@+id/textView3"
         app:layout_constraintTop_toBottomOf="@+id/textView1" />
 
     <EditText
         android:id="@+id/additionEditText"
         android:layout_width="345dp"
-        android:layout_height="220dp"
-        android:layout_marginStart="51dp"
-        android:layout_marginEnd="51dp"
-        android:layout_marginBottom="107dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="50dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="50dp"
         android:ems="10"
         android:hint="In addition..."
         android:inputType="text|textLongMessage|textMultiLine"
@@ -66,8 +69,6 @@
         android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/dateTextView" />
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
