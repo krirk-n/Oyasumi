@@ -8,7 +8,7 @@
     tools:context=".MainActivity">
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/floatingActionButton"
+        android:id="@+id/prevFloatingActionButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="250dp"
@@ -20,7 +20,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/floatingActionButton2"
+        android:id="@+id/nextFloatingActionButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="250dp"
@@ -30,67 +30,72 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <LinearLayout
-        android:id="@+id/linearLayout"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:isScrollContainer="true"
-        android:orientation="vertical">
+        android:layout_height="match_parent" >
 
-        <TextView
-            android:id="@+id/dateTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="52dp"
-            android:layout_marginTop="25dp"
-            android:layout_marginBottom="29dp"
-            android:text="Date: XX/XX/XXXX"
-            android:textSize="20sp" />
-
-        <TextView
-            android:id="@+id/textView1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="50dp"
-            android:layout_marginBottom="29dp"
-            android:text="Dear Diary ..."
-            android:textSize="20sp" />
-
-        <TextView
-            android:id="@+id/textView2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="50dp"
-            android:layout_marginBottom="1dp"
-            android:text="I slept X hours and XX minutes."
-            android:textSize="20sp" />
-
-        <TextView
-            android:id="@+id/textView3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="50dp"
-            android:layout_marginTop="8dp"
-            android:text="My sleep quality is X."
-            android:textSize="20sp" />
-
-        <Space
+        <LinearLayout
+            android:id="@+id/linearLayout"
             android:layout_width="match_parent"
-            android:layout_height="288dp" />
+            android:layout_height="wrap_content"
+            android:isScrollContainer="true"
+            android:orientation="vertical">
 
-        <EditText
-            android:id="@+id/additionEditText"
-            android:layout_width="345dp"
-            android:layout_height="209dp"
-            android:layout_marginStart="50dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginBottom="10dp"
-            android:ems="10"
-            android:hint="In addition..."
-            android:inputType="text|textLongMessage|textMultiLine"
-            android:lines="5"
-            android:textSize="20sp" />
+            <TextView
+                android:id="@+id/dateTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="52dp"
+                android:layout_marginTop="25dp"
+                android:layout_marginBottom="29dp"
+                android:text="Date: XX/XX/XXXX"
+                android:textSize="20sp" />
 
-    </LinearLayout>
+            <TextView
+                android:id="@+id/introTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="50dp"
+                android:layout_marginBottom="29dp"
+                android:text="Dear Diary ..."
+                android:textSize="20sp" />
+
+            <TextView
+                android:id="@+id/sleepDurationTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="50dp"
+                android:layout_marginBottom="1dp"
+                android:text="I've slept for X hours and XX minutes."
+                android:textSize="20sp" />
+
+            <TextView
+                android:id="@+id/sleepQualityTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="50dp"
+                android:layout_marginTop="8dp"
+                android:text="My sleep quality was X."
+                android:textSize="20sp" />
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="288dp" />
+
+            <EditText
+                android:id="@+id/additionEditText"
+                android:layout_width="345dp"
+                android:layout_height="209dp"
+                android:layout_marginStart="50dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="10dp"
+                android:ems="10"
+                android:hint="In addition..."
+                android:inputType="text|textLongMessage|textMultiLine"
+                android:lines="5"
+                android:textSize="20sp" />
+
+        </LinearLayout>
+    </ScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

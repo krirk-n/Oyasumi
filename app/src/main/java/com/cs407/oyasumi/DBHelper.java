@@ -38,18 +38,18 @@ public class DBHelper {
         sqLiteDatabase.close();
         return notesList;
     }
-    public void saveNotes(int noteId, String date, int sleepDuration, String sleepQuality, String additionalNote) {
+    public void saveNote(int noteId, String date, int sleepDuration, String sleepQuality, String additionalNote) {
         createTable();
         sqLiteDatabase.execSQL("INSERT INTO notes (noteId, date, sleepDuration, sleepQuality, additionalNote) VALUES (?, ?, ?, ?, ?)",
                 new String[]{String.valueOf(noteId), date, String.valueOf(sleepDuration), sleepQuality, additionalNote});
     }
-    public void updateNotes(int noteId, String date, int sleepDuration, String sleepQuality, String additionalNote) {
+    public void updateNote(int noteId, String date, int sleepDuration, String sleepQuality, String additionalNote) {
         createTable();
         Note note = new Note(noteId, date, sleepDuration, sleepQuality, additionalNote);
         sqLiteDatabase.execSQL("UPDATE notes set date=?, sleepDuration=?, sleepQuality=?, additionalNote=? WHERE noteId=?",
                 new String[]{date, String.valueOf(sleepDuration), sleepQuality, additionalNote, String.valueOf(noteId)});
     }
-    public void deleteNotes(int noteId) {
+    public void deleteNote(int noteId) {
         createTable();
         String date = "";
         Cursor cursor = sqLiteDatabase.rawQuery("SELECT date FROM notes WHERE noteId = ?",
@@ -57,8 +57,8 @@ public class DBHelper {
         if (cursor.moveToNext()) {
             date = cursor.getString(0);
         }
-        sqLiteDatabase.execSQL("DELETE FROM notes WHERE noteId = ? AND date =?",
-                new String[]{String.valueOf(noteId), date});
+        sqLiteDatabase.execSQL("DELETE FROM notes WHERE noteId = ?",
+                new String[]{String.valueOf(noteId)});
         cursor.close();
     }
 }
