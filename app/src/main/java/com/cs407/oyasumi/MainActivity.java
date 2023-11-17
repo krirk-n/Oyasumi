@@ -24,6 +24,7 @@ public class MainActivity extends AppCompatActivity {
     TextView dateTextView;
     TextView sleepDurationTextView;
     TextView sleepQualityTextView;
+    EditText dreamEditText;
     EditText additionEditText;
     FloatingActionButton prevFloatingActionButton;
     FloatingActionButton nextFloatingActionButton;
@@ -46,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 currentPage--;
                 Log.i("currentPage", String.valueOf(currentPage));
-                saveAdditionalNote();
+                saveDreamAndAdditionalNote();
                 resetUI();
                 checkButtons();
             }
@@ -56,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 currentPage++;
                 Log.i("currentPage", String.valueOf(currentPage));
-                saveAdditionalNote();
+                saveDreamAndAdditionalNote();
                 resetUI();
                 checkButtons();
             }
@@ -74,11 +75,13 @@ public class MainActivity extends AppCompatActivity {
         dateTextView = (TextView) findViewById(R.id.dateTextView);
         sleepDurationTextView = (TextView) findViewById(R.id.sleepDurationTextView);
         sleepQualityTextView = (TextView) findViewById(R.id.sleepQualityTextView);
+        dreamEditText = (EditText) findViewById(R.id.dreamEditText);
         additionEditText = (EditText) findViewById(R.id.additionEditText);
         dateTextView.setText(recentNote.getDate());
         sleepDurationTextView.setText("I've slept for " + recentNote.getSleepDuration() / 3600 + " hours "
             + (recentNote.getSleepDuration() % 3600) / 60 + " minutes."); // assume we get seconds from sleep duration
         sleepQualityTextView.setText("My sleep quality was " + recentNote.getSleepQuality() + ".");
+        dreamEditText.setText(recentNote.getDreamNote());
         additionEditText.setText(recentNote.getAdditionalNote());
     }
 
@@ -96,22 +99,25 @@ public class MainActivity extends AppCompatActivity {
         dateTextView = (TextView) findViewById(R.id.dateTextView);
         sleepDurationTextView = (TextView) findViewById(R.id.sleepDurationTextView);
         sleepQualityTextView = (TextView) findViewById(R.id.sleepQualityTextView);
+        dreamEditText = (EditText) findViewById(R.id.dreamEditText);
         additionEditText = (EditText) findViewById(R.id.additionEditText);
         dateTextView.setText(currentNote.getDate());
         sleepDurationTextView.setText("I've slept for " + currentNote.getSleepDuration() / 3600 + " hours "
                 + (currentNote.getSleepDuration() % 3600) / 60 + " minutes."); // assume we get seconds from sleep duration
         sleepQualityTextView.setText("My sleep quality was " + currentNote.getSleepQuality() + ".");
+        dreamEditText.setText(currentNote.getDreamNote());
         additionEditText.setText(currentNote.getAdditionalNote());
     }
 
-    public void saveAdditionalNote() {
+    public void saveDreamAndAdditionalNote() {
         Context context = getApplicationContext();
         SQLiteDatabase sqLiteDatabase = context.openOrCreateDatabase("notes", Context.MODE_PRIVATE, null);
         DBHelper dbHelper = new DBHelper(sqLiteDatabase);
         String newAdditionalNote = additionEditText.getText().toString();
+        String newDreamNote = dreamEditText.getText().toString();
         Log.i("add", "new: " + newAdditionalNote);
         dbHelper.updateNote(currentNote.getNoteId(), currentNote.getDate(), currentNote.getSleepDuration(),
-                currentNote.getSleepQuality(), newAdditionalNote);
+                currentNote.getSleepQuality(), newDreamNote, newAdditionalNote);
     }
 
     public void createDummyNotes(int num) {
@@ -129,7 +135,8 @@ public class MainActivity extends AppCompatActivity {
             String sleepQuality = sleepQualityTypes.get(random.nextInt(3));
             sqLiteDatabase = context.openOrCreateDatabase("notes", Context.MODE_PRIVATE, null);
             dbHelper = new DBHelper(sqLiteDatabase);
-            dbHelper.saveNote(noteId, date, 20000 + random.nextInt(20000), sleepQuality, "This is a dummy " + noteId);
+            dbHelper.saveNote(noteId, date, 20000 + random.nextInt(20000), sleepQuality,
+                    "Dummy is dreaming" + noteId, "This is a dummy " + noteId);
         }
     }
 }
