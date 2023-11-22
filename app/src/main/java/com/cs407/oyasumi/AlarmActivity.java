@@ -53,26 +53,50 @@ public class AlarmActivity extends AppCompatActivity {
     }
 
     public void saveAlarm(View view) {
+        //get the desired time from the time picker
         TimePicker timePicker = (TimePicker) findViewById(R.id.alarmClock);
         int hour = timePicker.getHour();
         int minute = timePicker.getMinute();
 
+        //save the time in shared preferences
         SharedPreferences sharedPreferences = getSharedPreferences("oyasumi_alarm_data", Context.MODE_PRIVATE);
         sharedPreferences.edit().putInt("hour", hour).apply();
         sharedPreferences.edit().putInt("minute", minute).apply();
+        Log.i("info", "MainActivity: hour to be set - " + hour);
+        Log.i("info", "MainActivity: minute to be set - " + minute);
 
+
+        AlarmHelper.getInstance().createNotificationChannel(this);
+
+        AlarmHelper.getInstance().setCalendar(hour, minute);
+        Log.i("info", "MainActivity: setting alarm for: "  + AlarmHelper.getInstance().getTime());
+
+        //set up the alarm notification using alarm manager
+        Intent intentForReceiver = new Intent(this, AlarmReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 123, intentForReceiver, PendingIntent.FLAG_IMMUTABLE);
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        alarmManager.cancelAll(); //clear any previously set alarms before doing a new one TODO must be changed if want more robust alarm in future
+        alarmManager.setExact(AlarmManager.RTC_WAKEUP,AlarmHelper.getInstance().getTime(), pendingIntent);
+        Log.i("info", "AlarmActivity: alarm successfully saved");
+
+        //send toast to user to notify them of saved changes
         Toast.makeText(this, "Alarm Saved", Toast.LENGTH_SHORT).show();
 
+        //go back to MainActivity
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
     }
 
     public void cancelAlarm(View view) {
+        //get the previously set time from shared preferences
         SharedPreferences sharedPreferences = getSharedPreferences("oyasumi_alarm_data", Context.MODE_PRIVATE);
         int hour = sharedPreferences.getInt("hour", -1);
         int minute = sharedPreferences.getInt("minute", -1);
+
+        //if there is no previously set time, send notification to user about not being able to use alarm
         if ((hour == -1) || (minute == -1))
             openDialog();
+        //otherwise just send toast to user notifying them that previous settings are loaded and go back to MainActivity
         else {
             Toast.makeText(this, "Using Previous Alarm Setting", Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(this, MainActivity.class);
