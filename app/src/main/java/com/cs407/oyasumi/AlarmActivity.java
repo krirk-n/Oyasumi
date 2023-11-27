@@ -69,7 +69,7 @@ public class AlarmActivity extends AppCompatActivity {
         AlarmHelper.getInstance().createNotificationChannel(this);
 
         AlarmHelper.getInstance().setCalendar(hour, minute);
-        Log.i("info", "MainActivity: setting alarm for: "  + AlarmHelper.getInstance().getTime());
+        Log.i("info", "AlarmActivity: setting alarm for: "  + AlarmHelper.getInstance().getTime());
 
         //set up the alarm notification using alarm manager
         Intent intentForReceiver = new Intent(this, AlarmReceiver.class);
