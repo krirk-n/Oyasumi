@@ -1,14 +1,224 @@
 package com.cs407.oyasumi;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
+
+    TextView dateTextView;
+    TextView sleepDurationTextView;
+    TextView sleepQualityTextView;
+    EditText dreamEditText;
+    EditText additionEditText;
+    FloatingActionButton prevFloatingActionButton;
+    FloatingActionButton nextFloatingActionButton;
+    Button sleepButton;
+    Note currentNote;
+    private int currentPage = -1;
+    private int notesSize = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        //alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        SharedPreferences sharedPreferences = getSharedPreferences("oyasumi_alarm_data", Context.MODE_PRIVATE);
+        int hour = sharedPreferences.getInt("hour", -1);
+        int minute = sharedPreferences.getInt("minute", -1);
+        if((hour == -1)||(minute == -1))
+            Log.i("Info", "MainActivity: alarm not set");
+        else {
+            Log.i("Info", "MainActivity: alarm set");
+        }
+
+        Context context = getApplicationContext();
+        createDummyNotes(3);
+
+        prevFloatingActionButton = (FloatingActionButton) findViewById(R.id.prevFloatingActionButton);
+        nextFloatingActionButton = (FloatingActionButton) findViewById(R.id.nextFloatingActionButton);
+        sleepButton = (Button) findViewById(R.id.sleepButton);
+        dateTextView = (TextView) findViewById(R.id.dateTextView);
+        sleepDurationTextView = (TextView) findViewById(R.id.sleepDurationTextView);
+        sleepQualityTextView = (TextView) findViewById(R.id.sleepQualityTextView);
+        dreamEditText = (EditText) findViewById(R.id.dreamEditText);
+        additionEditText = (EditText) findViewById(R.id.additionEditText);
+
+        prevFloatingActionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (currentPage == -1) {
+                    currentPage = notesSize-1;
+                } else {
+                    currentPage--;
+                    saveDreamAndAdditionalNote();
+                }
+                resetUI();
+                Log.i("currentPage", String.valueOf(currentPage));
+                checkButtons();
+            }
+        });
+        nextFloatingActionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                currentPage++;
+                if (currentPage >= notesSize) {
+                    currentPage = -1;
+                    loadEmptyPage();
+                } else {
+                    saveDreamAndAdditionalNote();
+                    resetUI();
+                }
+                Log.i("currentPage", String.valueOf(currentPage));
+                checkButtons();
+            }
+        });
+
+        SQLiteDatabase sqLiteDatabase = context.openOrCreateDatabase("notes", Context.MODE_PRIVATE, null);
+        DBHelper dbHelper = new DBHelper(sqLiteDatabase);
+        ArrayList<Note> notes = dbHelper.readNotes();
+        notesSize = notes.size();
+
+        // Empty page for upcoming sleep
+        checkButtons();
+        DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+        String currentDate = dateFormat.format(new Date());
+        dateTextView.setText(currentDate);
+        sleepDurationTextView.setText("");
+        sleepQualityTextView.setText("");
+
+//        SQLiteDatabase sqLiteDatabase = context.openOrCreateDatabase("notes", Context.MODE_PRIVATE, null);
+//        DBHelper dbHelper = new DBHelper(sqLiteDatabase);
+//        ArrayList<Note> notes = dbHelper.readNotes();
+//        notesSize = notes.size();
+//        currentPage = notesSize-1;
+//        Log.i("currentPage", "Current page: " + String.valueOf(currentPage));
+//        Note recentNote = notes.get(currentPage); // show the recent note
+//        currentNote = recentNote; // will change after having todayPage
+//        checkButtons();
+//        dateTextView = (TextView) findViewById(R.id.dateTextView);
+//        sleepDurationTextView = (TextView) findViewById(R.id.sleepDurationTextView);
+//        sleepQualityTextView = (TextView) findViewById(R.id.sleepQualityTextView);
+//        dreamEditText = (EditText) findViewById(R.id.dreamEditText);
+//        additionEditText = (EditText) findViewById(R.id.additionEditText);
+//        dateTextView.setText(recentNote.getDate());
+//        sleepDurationTextView.setText("I've slept for " + recentNote.getSleepDuration() / 3600 + " hours "
+//            + (recentNote.getSleepDuration() % 3600) / 60 + " minutes."); // assume we get seconds from sleep duration
+//        sleepQualityTextView.setText("My sleep quality was " + recentNote.getSleepQuality() + ".");
+//        dreamEditText.setText(recentNote.getDreamNote());
+//        additionEditText.setText(recentNote.getAdditionalNote());
+    }
+
+    public void checkButtons() {
+        prevFloatingActionButton.setEnabled(currentPage > 0 || currentPage == -1);
+        nextFloatingActionButton.setEnabled(currentPage != -1);
+        if (currentPage == -1) {
+            sleepButton.setVisibility(View.VISIBLE);
+            dreamEditText.setVisibility(View.GONE);
+            additionEditText.setVisibility(View.GONE);
+        }
+        else {
+            sleepButton.setVisibility(View.GONE);
+            dreamEditText.setVisibility(View.VISIBLE);
+            additionEditText.setVisibility(View.VISIBLE);
+        }
+    }
+
+    public void resetUI() {
+        Context context = getApplicationContext();
+        SQLiteDatabase sqLiteDatabase = context.openOrCreateDatabase("notes", Context.MODE_PRIVATE, null);
+        DBHelper dbHelper = new DBHelper(sqLiteDatabase);
+        ArrayList<Note> notes = dbHelper.readNotes();
+        currentNote = notes.get(currentPage); // show the recent note
+        dateTextView.setText(currentNote.getDate());
+        sleepDurationTextView.setText("I've slept for " + currentNote.getSleepDuration() / 3600 + " hours "
+                + (currentNote.getSleepDuration() % 3600) / 60 + " minutes."); // assume we get seconds from sleep duration
+        sleepQualityTextView.setText("My sleep quality was " + currentNote.getSleepQuality() + ".");
+        dreamEditText.setText(currentNote.getDreamNote());
+        additionEditText.setText(currentNote.getAdditionalNote());
+    }
+
+    public void loadEmptyPage() {
+        DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+        String currentDate = dateFormat.format(new Date());
+        dateTextView.setText(currentDate);
+        sleepDurationTextView.setText("");
+        sleepQualityTextView.setText("");
+        dreamEditText.setText("");
+        additionEditText.setText("");
+    }
+
+    public void saveDreamAndAdditionalNote() {
+        Context context = getApplicationContext();
+        SQLiteDatabase sqLiteDatabase = context.openOrCreateDatabase("notes", Context.MODE_PRIVATE, null);
+        DBHelper dbHelper = new DBHelper(sqLiteDatabase);
+        String newAdditionalNote = additionEditText.getText().toString();
+        String newDreamNote = dreamEditText.getText().toString();
+        Log.i("add", "new: " + newAdditionalNote);
+        dbHelper.updateNote(currentNote.getNoteId(), currentNote.getDate(), currentNote.getSleepDuration(),
+                currentNote.getSleepQuality(), newDreamNote, newAdditionalNote);
+    }
+
+    public void createDummyNotes(int num) {
+        ArrayList<String> sleepQualityTypes = new ArrayList<>(Arrays.asList("poor", "fine", "excellent")) ;
+        Context context = getApplicationContext();
+        SQLiteDatabase sqLiteDatabase = context.openOrCreateDatabase("notes", Context.MODE_PRIVATE, null);
+        for (int i=1; i <= num; i++ ) {
+            DBHelper dbHelper = new DBHelper(sqLiteDatabase);
+            DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+            String date = dateFormat.format(new Date());
+            ArrayList<Note> notes = dbHelper.readNotes();
+            int notesSize = notes.size();
+            int noteId = notesSize + 1;
+            Random random = new Random();
+            String sleepQuality = sleepQualityTypes.get(random.nextInt(3));
+            sqLiteDatabase = context.openOrCreateDatabase("notes", Context.MODE_PRIVATE, null);
+            dbHelper = new DBHelper(sqLiteDatabase);
+            dbHelper.saveNote(noteId, date, 20000 + random.nextInt(20000), sleepQuality,
+                    "Dummy is dreaming" + noteId, "This is a dummy " + noteId);
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.main_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        int itemId = item.getItemId();
+        if (itemId == R.id.alarmClockMenuItem) {
+            //use an intent to go to the alarm activity
+            Intent intent = new Intent(this, AlarmActivity.class);
+            startActivity(intent);
+            return true;
+
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">Oyasumi</string>
+    <string name="oyasumi_alarm_channel_name">Oyasumi Alarm</string>
+    <string name="oyasumi_alarm_channel_description">Alarm Channel for the Oyasumi App</string>
+    <string name="please_allow_alarm_notification">Please allow the alarm notifications to continue to use this functionality.</string>
 </resources>
