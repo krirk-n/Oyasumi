@@ -82,7 +82,7 @@ public class AlarmHelper {
                 //.setContentText("time to wake up")
                 .setContent(customAlarmView)
                 //.setAutoCancel(true) //when user clicks on notification, it can be canceled
-                .setDefaults(Notification.DEFAULT_ALL)
+                //.setDefaults(Notification.DEFAULT_ALL)
                 .setLights(ARGB, 10, 10)
                // .setSound() //TODO can set a stream as well
                 .setPriority(NotificationCompat.PRIORITY_HIGH);
