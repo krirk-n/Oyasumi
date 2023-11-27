@@ -1,11 +1,17 @@
 package com.cs407.oyasumi;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -38,6 +44,17 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        //alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        SharedPreferences sharedPreferences = getSharedPreferences("oyasumi_alarm_data", Context.MODE_PRIVATE);
+        int hour = sharedPreferences.getInt("hour", -1);
+        int minute = sharedPreferences.getInt("minute", -1);
+        if((hour == -1)||(minute == -1))
+            Log.i("Info", "MainActivity: alarm not set");
+        else {
+            Log.i("Info", "MainActivity: alarm set");
+        }
+
         Context context = getApplicationContext();
         createDummyNotes(3);
 
@@ -183,5 +200,25 @@ public class MainActivity extends AppCompatActivity {
             dbHelper.saveNote(noteId, date, 20000 + random.nextInt(20000), sleepQuality,
                     "Dummy is dreaming" + noteId, "This is a dummy " + noteId);
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.main_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        int itemId = item.getItemId();
+        if (itemId == R.id.alarmClockMenuItem) {
+            //use an intent to go to the alarm activity
+            Intent intent = new Intent(this, AlarmActivity.class);
+            startActivity(intent);
+            return true;
+
+        }
+        return super.onOptionsItemSelected(item);
     }
 }
