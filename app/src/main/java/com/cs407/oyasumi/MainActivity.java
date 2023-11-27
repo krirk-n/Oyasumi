@@ -44,6 +44,11 @@ public class MainActivity extends AppCompatActivity {
         prevFloatingActionButton = (FloatingActionButton) findViewById(R.id.prevFloatingActionButton);
         nextFloatingActionButton = (FloatingActionButton) findViewById(R.id.nextFloatingActionButton);
         sleepButton = (Button) findViewById(R.id.sleepButton);
+        dateTextView = (TextView) findViewById(R.id.dateTextView);
+        sleepDurationTextView = (TextView) findViewById(R.id.sleepDurationTextView);
+        sleepQualityTextView = (TextView) findViewById(R.id.sleepQualityTextView);
+        dreamEditText = (EditText) findViewById(R.id.dreamEditText);
+        additionEditText = (EditText) findViewById(R.id.additionEditText);
 
         prevFloatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -82,11 +87,6 @@ public class MainActivity extends AppCompatActivity {
 
         // Empty page for upcoming sleep
         checkButtons();
-        dateTextView = (TextView) findViewById(R.id.dateTextView);
-        sleepDurationTextView = (TextView) findViewById(R.id.sleepDurationTextView);
-        sleepQualityTextView = (TextView) findViewById(R.id.sleepQualityTextView);
-        dreamEditText = (EditText) findViewById(R.id.dreamEditText);
-        additionEditText = (EditText) findViewById(R.id.additionEditText);
         DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
         String currentDate = dateFormat.format(new Date());
         dateTextView.setText(currentDate);
@@ -118,8 +118,16 @@ public class MainActivity extends AppCompatActivity {
     public void checkButtons() {
         prevFloatingActionButton.setEnabled(currentPage > 0 || currentPage == -1);
         nextFloatingActionButton.setEnabled(currentPage != -1);
-        if (currentPage == -1) sleepButton.setVisibility(View.VISIBLE);
-        else sleepButton.setVisibility(View.GONE);
+        if (currentPage == -1) {
+            sleepButton.setVisibility(View.VISIBLE);
+            dreamEditText.setVisibility(View.GONE);
+            additionEditText.setVisibility(View.GONE);
+        }
+        else {
+            sleepButton.setVisibility(View.GONE);
+            dreamEditText.setVisibility(View.VISIBLE);
+            additionEditText.setVisibility(View.VISIBLE);
+        }
     }
 
     public void resetUI() {
