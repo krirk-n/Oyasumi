@@ -6,6 +6,8 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.github.mikephil.charting.charts.BarChart;
@@ -16,18 +18,25 @@ import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
+import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.formatter.ValueFormatter;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.StringTokenizer;
 
 public class DetailActivity extends AppCompatActivity {
-    private TextView tvSleepTime;
-    private TextView tvTimeInBed;
-    private long sleepTimeS = 0;
-    private long sleepTimeM = 0;
-    private long sleepTimeH = 0;
-    private String date;
+    private long[] sleepTimeS = new long[5];
+    private long[] sleepTimeM = new long[5];
+    private long[] sleepTimeH = new long[5];
+    private String[] date = new String[5];;
+    private String[] startTime = new String[5];
+    private String[] endTime = new String[5];
+    private String FILENAME = "sleepData.txt";
 
     @SuppressLint("SetTextI18n")
     @Override
@@ -35,30 +44,82 @@ public class DetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
 
-        Intent intent = getIntent();
+        /*Intent intent = getIntent();
         date = intent.getStringExtra("date");
+        if(date == null) {
+            date = "11/30/2023";
+        }
         sleepTimeH = intent.getLongExtra("sleepTimeH", 0);
         sleepTimeM = intent.getLongExtra("sleepTimeM", 0);
         sleepTimeS = intent.getLongExtra("sleepTimeS", 0);
-        String startTime = intent.getStringExtra("startTime");
-        String endTime = intent.getStringExtra("endTime");
+        startTime = intent.getStringExtra("startTime");
+        endTime = intent.getStringExtra("endTime");*/
+
+        for(int i = 0; i < 5; i++) {
+            date[i] = "00/00/0000";
+        }
+
+        FileInputStream fis = null;
+        int i = 0;
+        try {
+            fis = openFileInput(FILENAME);
+            byte[] buffer = new byte[fis.available()];
+            fis.read(buffer);
+
+            System.out.println("Sleep " + new String(buffer));
+            StringTokenizer st = new StringTokenizer(new String(buffer), "\0");
+            int maxCount = st.countTokens();
+            int count = 0;
+
+            while(st.hasMoreTokens()) {
+                count = st.countTokens();
+                if(count != maxCount && count % 6 == 0) {
+                    i++;
+                }
+
+                date[i] = st.nextToken();
+                sleepTimeH[i] = Long.parseLong(st.nextToken());
+                sleepTimeM[i] = Long.parseLong(st.nextToken());
+                sleepTimeS[i] = Long.parseLong(st.nextToken());
+                startTime[i] = st.nextToken();
+                endTime[i] = st.nextToken();
+            }
+
+            fis.close();
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
         BarChart bc = (BarChart) findViewById(R.id.chart);
         this.initBarChart(bc);
         this.setChartData(bc);
 
-        tvSleepTime = (TextView) findViewById(R.id.tvSleepTime2);
-        tvTimeInBed = (TextView) findViewById(R.id.tvTimeInBed);
+        TextView tvSleepTime = (TextView) findViewById(R.id.tvSleepTime2);
+        TextView tvSleepQuality = (TextView) findViewById(R.id.tvSleepQuality2);
+        TextView tvTimeInBed  = (TextView) findViewById(R.id.tvTimeInBed2);
 
-        tvSleepTime.setText("Sleep time = " + startTime + " - " + endTime);
+        tvSleepTime.setText("Sleep time = " + startTime[i] + " - " + endTime[i]);
+        tvSleepQuality.setText("Sleep quality = " + (sleepTimeH[i] / 8 * 100) + "%");
 
-        if(sleepTimeH > 0) {
-            tvTimeInBed.setText("Sleep time : " + sleepTimeH + "hours " + sleepTimeM + "mins " + sleepTimeS + "secs");
-        } else if(sleepTimeM > 0) {
-            tvTimeInBed.setText("Sleep time : " + sleepTimeM + "mins " + sleepTimeS + "secs");
+        if(sleepTimeH[i] > 0) {
+            tvTimeInBed.setText("Time in bed : " + sleepTimeH[i] + "hours " + sleepTimeM[i] + "mins " + sleepTimeS[i] + "secs");
+        } else if(sleepTimeM[i] > 0) {
+            tvTimeInBed.setText("Time in bed : " + sleepTimeM[i] + "mins " + sleepTimeS[i] + "secs");
         } else {
-            tvTimeInBed.setText("Sleep time : " + sleepTimeS + " secs");
+            tvTimeInBed.setText("Time in bed : " + sleepTimeS[i] + " secs");
         }
+
+        Button btBack = (Button) findViewById(R.id.btBack);
+        btBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent mainIntent = new Intent(DetailActivity.this, MainActivity.class);
+                mainIntent.addFlags(mainIntent.FLAG_ACTIVITY_CLEAR_TOP | mainIntent.FLAG_ACTIVITY_SINGLE_TOP);
+                startActivity(mainIntent);
+            }
+        });
     }
 
     private void initBarChart(BarChart barChart) {
@@ -90,19 +151,24 @@ public class DetailActivity extends AppCompatActivity {
         xAxis.setDrawAxisLine(false);
         // 격자선 설정 (default = true)
         xAxis.setDrawGridLines(false);
-        //xAxis.setValueFormatter();
+
+        List<String> xAxisValues = new ArrayList<>(Arrays.asList(
+                date[0].substring(0,5), date[1].substring(0,5), date[2].substring(0,5), date[3].substring(0,5), date[4].substring(0,5)));
+        xAxis.setValueFormatter(new com.github.mikephil.charting.formatter.IndexAxisValueFormatter(xAxisValues));
 
         YAxis leftAxis = barChart.getAxisLeft();
         // 좌측 선 설정 (default = true)
         leftAxis.setDrawAxisLine(false);
         // 좌측 텍스트 컬러 설정
         leftAxis.setTextColor(Color.BLUE);
+        leftAxis.setGranularity(3f);
 
         YAxis rightAxis = barChart.getAxisRight();
         // 우측 선 설정 (default = true)
         rightAxis.setDrawAxisLine(false);
         // 우측 텍스트 컬러 설정
         rightAxis.setTextColor(Color.GREEN);
+        rightAxis.setGranularity(3f);
 
         // 바차트의 타이틀
         Legend legend = barChart.getLegend();
@@ -126,11 +192,13 @@ public class DetailActivity extends AppCompatActivity {
         barChart.setScaleEnabled(false);
 
         ArrayList<BarEntry> valueList = new ArrayList<BarEntry>();
-        String title = "날짜";
+        String title = "Date";
 
         // 임의 데이터
         for (int i = 0; i < 5; i++) {
-            valueList.add(new BarEntry((float)i, i * 100f));
+            //valueList.add(new BarEntry((float)i, i * 100f));
+            //valueList.add(new BarEntry((float)i, i * 3f));
+            valueList.add(new BarEntry((float)i, sleepTimeH[i]));
         }
 
         BarDataSet barDataSet = new BarDataSet(valueList, title);
@@ -142,15 +210,5 @@ public class DetailActivity extends AppCompatActivity {
         BarData data = new BarData(barDataSet);
         barChart.setData(data);
         barChart.invalidate();
-    }
-
-    private class XAxisCustomFormatter extends ValueFormatter {
-        public XAxisCustomFormatter() {
-        }
-
-        @Override
-        public String getFormattedValue(float value) {
-            return super.getFormattedValue(value);
-        }
     }
 }
