@@ -71,25 +71,26 @@
             android:id="@+id/tvSleepTime"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="100dp"
-            android:text="Sleep time : XXXXX mins"
+            android:layout_marginLeft="50dp"
+            android:text="Sleep time = 00:00AM - 00:00AM"
             android:textSize="20sp"/>
 
         <TextView
             android:id="@+id/tvSleepQuality"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="100dp"
-            android:text="Sleep quality : XXXX"
+            android:layout_marginLeft="50dp"
+            android:text="Sleep quality = 0%"
             android:textSize="20sp"/>
 
         <TextView
-            android:id="@+id/tvSnore"
+            android:id="@+id/tvTimeInBed"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="100dp"
-            android:text="Snore detected : XXXX"
+            android:layout_marginLeft="50dp"
+            android:text="Time in bed = 00:00"
             android:textSize="20sp"/>
+
     </LinearLayout>
 
 </android.widget.RelativeLayout>

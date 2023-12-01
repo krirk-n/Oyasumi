@@ -23,7 +23,9 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent" >
+
+        </com.github.mikephil.charting.charts.BarChart>
 
         <!-- <CalendarView
             android:id="@+id/calendarView"
@@ -32,10 +34,11 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/textLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="20dp"
         android:layout_below="@id/topLayout">
 
         <TextView
@@ -43,7 +46,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="50dp"
-            android:text="Sleep time = 11:59PM - 08:15AM"
+            android:text="Sleep time = 00:00AM - 00:00AM"
             android:textSize="20sp"/>
 
         <TextView
@@ -51,16 +54,32 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="50dp"
-            android:text="Sleep quality = 100%"
+            android:text="Sleep quality = 0%"
             android:textSize="20sp"/>
 
         <TextView
-            android:id="@+id/tvTimeInBed"
+            android:id="@+id/tvTimeInBed2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="50dp"
-            android:text="Time in bed = 8:15"
+            android:text="Time in bed = 00:00"
             android:textSize="20sp"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_below="@id/textLayout"
+        android:layout_marginTop="20dp"
+        android:gravity="center">
+
+        <Button
+            android:id="@+id/btBack"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Back" />
     </LinearLayout>
 
 </android.widget.RelativeLayout>
