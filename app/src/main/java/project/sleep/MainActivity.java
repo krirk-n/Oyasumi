@@ -261,7 +261,9 @@ public class MainActivity extends AppCompatActivity {
                         tvTimeInBed.setText("Time in bed : " + sleepTimeS + " secs");
                     }
 
-                    tvSleepQuality.setText("Sleep quality = " + (sleepTimeH / 8 * 100) + "%");
+                    long sleepTime = sleepTimeS + (sleepTimeM * 60) + (sleepTimeH * 60 * 60);
+
+                    tvSleepQuality.setText("Sleep quality = " + String.format("%3.3f", (sleepTime * 100.000f / (8.000f * 60.000f * 60.000f))) + "%");
                 }
             }
         });

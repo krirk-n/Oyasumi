@@ -101,7 +101,9 @@ public class DetailActivity extends AppCompatActivity {
         TextView tvTimeInBed  = (TextView) findViewById(R.id.tvTimeInBed2);
 
         tvSleepTime.setText("Sleep time = " + startTime[i] + " - " + endTime[i]);
-        tvSleepQuality.setText("Sleep quality = " + (sleepTimeH[i] / 8 * 100) + "%");
+
+        long sleepTime = sleepTimeS[i] + (sleepTimeM[i] * 60) + (sleepTimeH[i] * 60 * 60);
+        tvSleepQuality.setText("Sleep quality = " + String.format("%3.3f", (sleepTime * 100.000f / (8.000f * 60.000f * 60.000f))) + "%");
 
         if(sleepTimeH[i] > 0) {
             tvTimeInBed.setText("Time in bed : " + sleepTimeH[i] + "hours " + sleepTimeM[i] + "mins " + sleepTimeS[i] + "secs");
@@ -194,11 +196,13 @@ public class DetailActivity extends AppCompatActivity {
         ArrayList<BarEntry> valueList = new ArrayList<BarEntry>();
         String title = "Date";
 
-        // 임의 데이터
+
+
         for (int i = 0; i < 5; i++) {
             //valueList.add(new BarEntry((float)i, i * 100f));
             //valueList.add(new BarEntry((float)i, i * 3f));
-            valueList.add(new BarEntry((float)i, sleepTimeH[i]));
+            float sleepTime = (sleepTimeS[i] / 60f) + (sleepTimeM[i]) + (sleepTimeH[i] * 60);
+            valueList.add(new BarEntry((float)i, sleepTime));
         }
 
         BarDataSet barDataSet = new BarDataSet(valueList, title);
