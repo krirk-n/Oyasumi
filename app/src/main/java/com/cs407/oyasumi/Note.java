@@ -6,13 +6,16 @@ public class Note {
     private int sleepDuration;
     private String sleepQuality;
     private String dreamNote;
+    private String dreamInterpret;
     private String additionalNote;
-    public Note(int noteId, String date, int sleepDuration, String sleepQuality, String dreamNote, String additionalNote){
+    public Note(int noteId, String date, int sleepDuration, String sleepQuality, String dreamNote,
+                String dreamInterpret, String additionalNote){
         this.noteId = noteId;
         this.date = date;
         this.sleepDuration = sleepDuration;
         this.sleepQuality = sleepQuality;
         this.dreamNote = dreamNote;
+        this.dreamInterpret = dreamInterpret;
         this.additionalNote = additionalNote;
     }
     public int getNoteId() {
@@ -28,6 +31,7 @@ public class Note {
         return sleepQuality;
     }
     public String getDreamNote() { return dreamNote;}
+    public String getDreamInterpret() { return dreamInterpret;}
     public String getAdditionalNote() {
         return additionalNote;
     }

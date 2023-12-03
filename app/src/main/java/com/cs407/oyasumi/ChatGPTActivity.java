@@ -1,4 +1,4 @@
-package com.example.oyasumi;
+package com.cs407.oyasumi;
 
 //import androidx.appcompat.app.AppCompatActivity;
 //

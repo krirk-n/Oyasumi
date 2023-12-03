@@ -26,19 +26,41 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.Random;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.NetworkResponse;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.RetryPolicy;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
+
 public class MainActivity extends AppCompatActivity {
 
     TextView dateTextView;
     TextView sleepDurationTextView;
     TextView sleepQualityTextView;
+    TextView interpretTextView;
     EditText dreamEditText;
     EditText additionEditText;
     FloatingActionButton prevFloatingActionButton;
     FloatingActionButton nextFloatingActionButton;
     Button sleepButton;
+    Button interpretButton;
     Note currentNote;
     private int currentPage = -1;
     private int notesSize = 0;
+    private String stringURLEndPoint = "https://api.openai.com/v1/chat/completions";
+    private String stringAPIKey = "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";
+    private String stringOutput = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,11 +83,13 @@ public class MainActivity extends AppCompatActivity {
         prevFloatingActionButton = (FloatingActionButton) findViewById(R.id.prevFloatingActionButton);
         nextFloatingActionButton = (FloatingActionButton) findViewById(R.id.nextFloatingActionButton);
         sleepButton = (Button) findViewById(R.id.sleepButton);
+        interpretButton = (Button) findViewById(R.id.interpretButton);
         dateTextView = (TextView) findViewById(R.id.dateTextView);
         sleepDurationTextView = (TextView) findViewById(R.id.sleepDurationTextView);
         sleepQualityTextView = (TextView) findViewById(R.id.sleepQualityTextView);
         dreamEditText = (EditText) findViewById(R.id.dreamEditText);
         additionEditText = (EditText) findViewById(R.id.additionEditText);
+        interpretTextView = (TextView) findViewById(R.id.interpretTextView);
 
         prevFloatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -110,26 +134,6 @@ public class MainActivity extends AppCompatActivity {
         sleepDurationTextView.setText("");
         sleepQualityTextView.setText("");
 
-//        SQLiteDatabase sqLiteDatabase = context.openOrCreateDatabase("notes", Context.MODE_PRIVATE, null);
-//        DBHelper dbHelper = new DBHelper(sqLiteDatabase);
-//        ArrayList<Note> notes = dbHelper.readNotes();
-//        notesSize = notes.size();
-//        currentPage = notesSize-1;
-//        Log.i("currentPage", "Current page: " + String.valueOf(currentPage));
-//        Note recentNote = notes.get(currentPage); // show the recent note
-//        currentNote = recentNote; // will change after having todayPage
-//        checkButtons();
-//        dateTextView = (TextView) findViewById(R.id.dateTextView);
-//        sleepDurationTextView = (TextView) findViewById(R.id.sleepDurationTextView);
-//        sleepQualityTextView = (TextView) findViewById(R.id.sleepQualityTextView);
-//        dreamEditText = (EditText) findViewById(R.id.dreamEditText);
-//        additionEditText = (EditText) findViewById(R.id.additionEditText);
-//        dateTextView.setText(recentNote.getDate());
-//        sleepDurationTextView.setText("I've slept for " + recentNote.getSleepDuration() / 3600 + " hours "
-//            + (recentNote.getSleepDuration() % 3600) / 60 + " minutes."); // assume we get seconds from sleep duration
-//        sleepQualityTextView.setText("My sleep quality was " + recentNote.getSleepQuality() + ".");
-//        dreamEditText.setText(recentNote.getDreamNote());
-//        additionEditText.setText(recentNote.getAdditionalNote());
     }
 
     public void checkButtons() {
@@ -138,11 +142,15 @@ public class MainActivity extends AppCompatActivity {
         if (currentPage == -1) {
             sleepButton.setVisibility(View.VISIBLE);
             dreamEditText.setVisibility(View.GONE);
+            interpretTextView.setVisibility(View.GONE);
+            interpretButton.setVisibility(View.GONE);
             additionEditText.setVisibility(View.GONE);
         }
         else {
             sleepButton.setVisibility(View.GONE);
             dreamEditText.setVisibility(View.VISIBLE);
+            interpretTextView.setVisibility(View.VISIBLE);
+            interpretButton.setVisibility(View.VISIBLE);
             additionEditText.setVisibility(View.VISIBLE);
         }
     }
@@ -158,6 +166,7 @@ public class MainActivity extends AppCompatActivity {
                 + (currentNote.getSleepDuration() % 3600) / 60 + " minutes."); // assume we get seconds from sleep duration
         sleepQualityTextView.setText("My sleep quality was " + currentNote.getSleepQuality() + ".");
         dreamEditText.setText(currentNote.getDreamNote());
+        interpretTextView.setText(currentNote.getDreamInterpret());
         additionEditText.setText(currentNote.getAdditionalNote());
     }
 
@@ -168,6 +177,7 @@ public class MainActivity extends AppCompatActivity {
         sleepDurationTextView.setText("");
         sleepQualityTextView.setText("");
         dreamEditText.setText("");
+        interpretTextView.setText("");
         additionEditText.setText("");
     }
 
@@ -177,9 +187,10 @@ public class MainActivity extends AppCompatActivity {
         DBHelper dbHelper = new DBHelper(sqLiteDatabase);
         String newAdditionalNote = additionEditText.getText().toString();
         String newDreamNote = dreamEditText.getText().toString();
-        Log.i("add", "new: " + newAdditionalNote);
+        String newInterpret = interpretTextView.getText().toString();
+        Log.i("add", "new: " + newInterpret);
         dbHelper.updateNote(currentNote.getNoteId(), currentNote.getDate(), currentNote.getSleepDuration(),
-                currentNote.getSleepQuality(), newDreamNote, newAdditionalNote);
+                currentNote.getSleepQuality(), newDreamNote, newInterpret, newAdditionalNote);
     }
 
     public void createDummyNotes(int num) {
@@ -198,8 +209,73 @@ public class MainActivity extends AppCompatActivity {
             sqLiteDatabase = context.openOrCreateDatabase("notes", Context.MODE_PRIVATE, null);
             dbHelper = new DBHelper(sqLiteDatabase);
             dbHelper.saveNote(noteId, date, 20000 + random.nextInt(20000), sleepQuality,
-                    "Dummy is dreaming" + noteId, "This is a dummy " + noteId);
+                    "Dummy is dreaming" + noteId, "","This is a dummy " + noteId);
         }
+    }
+    public void buttonChatGPT(View view){
+        JSONObject jsonObject = new JSONObject();
+        interpretTextView.setText("loading...");
+        try {
+            jsonObject.put("model", "gpt-3.5-turbo");
+
+            JSONArray jsonArrayMessage = new JSONArray();
+            JSONObject jsonObjectMessage = new JSONObject();
+            jsonObjectMessage.put("role", "user");
+            jsonObjectMessage.put("content", "Write a brief interpretation on this dream in 80 words: " +
+                    dreamEditText.getText().toString());
+            jsonArrayMessage.put(jsonObjectMessage);
+
+            jsonObject.put("messages", jsonArrayMessage);
+
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
+
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST,
+                stringURLEndPoint, jsonObject, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+
+                String stringText = null;
+                try {
+                    stringText = response.getJSONArray("choices")
+                            .getJSONObject(0)
+                            .getJSONObject("message")
+                            .getString("content");
+                } catch (JSONException e) {
+                    throw new RuntimeException(e);
+                }
+
+                stringOutput = stringOutput + stringText;
+                interpretTextView.setText(stringOutput);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                interpretTextView.setText("There is an error. Please try again later.");
+            }
+        }){
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> mapHeader = new HashMap<>();
+                mapHeader.put("Authorization", "Bearer " + stringAPIKey);
+                mapHeader.put("Content-Type", "application/json");
+
+                return mapHeader;
+            }
+
+            @Override
+            protected Response<JSONObject> parseNetworkResponse(NetworkResponse response) {
+                return super.parseNetworkResponse(response);
+            }
+        };
+
+        int intTimeoutPeriod = 60000; // 60 seconds timeout duration defined
+        RetryPolicy retryPolicy = new DefaultRetryPolicy(intTimeoutPeriod,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
+        jsonObjectRequest.setRetryPolicy(retryPolicy);
+        Volley.newRequestQueue(getApplicationContext()).add(jsonObjectRequest);
     }
 
     @Override

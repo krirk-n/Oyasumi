@@ -12,7 +12,8 @@ public class DBHelper {
     }
     public static void createTable() {
         sqLiteDatabase.execSQL("CREATE TABLE IF NOT EXISTS notes " +
-                "(id INTEGER PRIMARY KEY, noteId INTEGER, date TEXT, sleepDuration INTEGER, sleepQuality TEXT, dreamNote TEXT, additionalNote TEXT)");
+                "(id INTEGER PRIMARY KEY, noteId INTEGER, date TEXT, sleepDuration INTEGER," +
+                " sleepQuality TEXT, dreamNote TEXT, dreamInterpret TEXT, additionalNote TEXT)");
     }
     public ArrayList<Note> readNotes() {
         createTable();
@@ -22,6 +23,7 @@ public class DBHelper {
         int sleepDurationIndex = c.getColumnIndex("sleepDuration");
         int sleepQualityIndex = c.getColumnIndex("sleepQuality");
         int dreamNoteIndex = c.getColumnIndex("dreamNote");
+        int dreamInterpretIndex = c.getColumnIndex("dreamInterpret");
         int additionalNoteIndex = c.getColumnIndex("additionalNote");
         c.moveToFirst();
         ArrayList<Note> notesList = new ArrayList<>();
@@ -31,8 +33,10 @@ public class DBHelper {
             int sleepDuration = c.getInt(sleepDurationIndex);
             String sleepQuality = c.getString(sleepQualityIndex);
             String dreamNote = c.getString(dreamNoteIndex);
+            String dreamInterpret = c.getString(dreamInterpretIndex);
             String additionalNote = c.getString(additionalNoteIndex);
-            Note notes = new Note(noteId, date, sleepDuration, sleepQuality, dreamNote, additionalNote);
+            Note notes = new Note(noteId, date, sleepDuration, sleepQuality, dreamNote,
+                    dreamInterpret, additionalNote);
             notesList.add(notes);
             c.moveToNext();
         }
@@ -40,16 +44,18 @@ public class DBHelper {
         sqLiteDatabase.close();
         return notesList;
     }
-    public void saveNote(int noteId, String date, int sleepDuration, String sleepQuality, String dreamNote, String additionalNote) {
+    public void saveNote(int noteId, String date, int sleepDuration, String sleepQuality, String dreamNote,
+                         String dreamInterpret, String additionalNote) {
         createTable();
-        sqLiteDatabase.execSQL("INSERT INTO notes (noteId, date, sleepDuration, sleepQuality, dreamNote, additionalNote) VALUES (?, ?, ?, ?, ?, ?)",
-                new String[]{String.valueOf(noteId), date, String.valueOf(sleepDuration), sleepQuality, dreamNote, additionalNote});
+        sqLiteDatabase.execSQL("INSERT INTO notes (noteId, date, sleepDuration, sleepQuality, dreamNote, dreamInterpret, additionalNote) VALUES (?, ?, ?, ?, ?, ?, ?)",
+                new String[]{String.valueOf(noteId), date, String.valueOf(sleepDuration), sleepQuality, dreamNote, dreamInterpret, additionalNote});
     }
-    public void updateNote(int noteId, String date, int sleepDuration, String sleepQuality, String dreamNote, String additionalNote) {
+    public void updateNote(int noteId, String date, int sleepDuration, String sleepQuality,
+                           String dreamNote, String dreamInterpret, String additionalNote) {
         createTable();
-        Note note = new Note(noteId, date, sleepDuration, sleepQuality, dreamNote, additionalNote);
-        sqLiteDatabase.execSQL("UPDATE notes set date=?, sleepDuration=?, sleepQuality=?, dreamNote=?, additionalNote=? WHERE noteId=?",
-                new String[]{date, String.valueOf(sleepDuration), sleepQuality, dreamNote, additionalNote, String.valueOf(noteId)});
+        Note note = new Note(noteId, date, sleepDuration, sleepQuality, dreamNote, dreamInterpret, additionalNote);
+        sqLiteDatabase.execSQL("UPDATE notes set date=?, sleepDuration=?, sleepQuality=?, dreamNote=?, dreamInterpret=?, additionalNote=? WHERE noteId=?",
+                new String[]{date, String.valueOf(sleepDuration), sleepQuality, dreamNote, dreamInterpret, additionalNote, String.valueOf(noteId)});
     }
     public void deleteNote(int noteId) {
         createTable();

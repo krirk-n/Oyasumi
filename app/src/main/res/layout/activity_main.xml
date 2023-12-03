@@ -101,9 +101,25 @@
                 android:lines="5"
                 android:textSize="20sp" />
 
+            <Button
+                android:id="@+id/interpretButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="50dp"
+                android:onClick="buttonChatGPT"
+                android:text="Interpret it!" />
+
+            <TextView
+                android:id="@+id/interpretTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="50dp"
+                android:layout_marginRight="20dp"
+                android:textSize="16sp" />
+
             <Space
                 android:layout_width="match_parent"
-                android:layout_height="100dp" />
+                android:layout_height="18dp" />
 
             <EditText
                 android:id="@+id/additionEditText"
