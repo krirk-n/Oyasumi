@@ -39,7 +39,7 @@ import java.util.Map;
 public class ChatGPTActivity extends AppCompatActivity {
     private TextView textView;
     private String stringURLEndPoint = "https://api.openai.com/v1/chat/completions";
-    private String stringAPIKey = "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";
+    private String stringAPIKey = "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";
     private String stringOutput = "";
 
     @Override
@@ -59,7 +59,7 @@ public class ChatGPTActivity extends AppCompatActivity {
             JSONArray jsonArrayMessage = new JSONArray();
             JSONObject jsonObjectMessage = new JSONObject();
             jsonObjectMessage.put("role", "user");
-            jsonObjectMessage.put("content", "Write a brief interpretation on this dream: " +
+            jsonObjectMessage.put("content", "Write a brief interpretation on this dream in 100 words: " +
                     "I dreamt about crows and they were eating potato chips.");
             jsonArrayMessage.put(jsonObjectMessage);
 
