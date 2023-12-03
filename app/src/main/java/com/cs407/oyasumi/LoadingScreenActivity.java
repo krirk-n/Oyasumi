@@ -35,9 +35,9 @@ public class LoadingScreenActivity extends AppCompatActivity {
 
         TextView loadingText = (TextView) findViewById(R.id.loadingText);
 
-        for(int loadingProgress = 0; loadingProgress <= 100; loadingProgress += 10) {
+        for(int loadingProgress = 0; loadingProgress <= 100; loadingProgress += 20) {
             try {
-                Thread.sleep(1000);
+                Thread.sleep(700);
             } catch (InterruptedException e) {
                 Toast.makeText(this, "Error Loading App, Please Close and Try Again", Toast.LENGTH_LONG).show();
                 e.printStackTrace();
