@@ -4,43 +4,112 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_gravity="center"
+    android:background="@color/alarm_background"
     tools:context=".AlarmActivity">
 
     <TimePicker
         android:id="@+id/alarmClock"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginTop="97dp"
-        android:layout_marginBottom="12dp"
-        app:layout_constraintBottom_toTopOf="@+id/cancelAlarmButton"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        android:headerBackground="@android:color/transparent"
+        android:numbersBackgroundColor="@android:color/transparent"
+        android:numbersSelectorColor="@color/oyasumi_lavender"
+        android:padding="20dp"
+        android:timePickerMode="clock"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/saveAlarmButton"
-        android:layout_width="0dp"
+        android:layout_width="105dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="78dp"
-        android:layout_marginTop="12dp"
-        android:layout_marginEnd="53dp"
+        android:layout_marginStart="77dp"
+        android:layout_marginEnd="63dp"
+        android:backgroundTint="@color/oyasumi_lavender"
         android:onClick="saveAlarm"
         android:text="SAVE"
+        android:textStyle="bold"
         app:layout_constraintEnd_toStartOf="@+id/cancelAlarmButton"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/alarmClock" />
 
     <Button
         android:id="@+id/cancelAlarmButton"
-        android:layout_width="wrap_content"
+        android:layout_width="105dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="70dp"
-        android:layout_marginBottom="214dp"
+        android:layout_marginEnd="77dp"
+        android:backgroundTint="@color/oyasumi_lavender"
         android:onClick="cancelAlarm"
         android:text="CANCEL"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/saveAlarmButton"
         app:layout_constraintTop_toBottomOf="@+id/alarmClock" />
+
+    <ImageView
+        android:id="@+id/alarmTimeBackground"
+        android:layout_width="0dp"
+        android:layout_height="179dp"
+        android:layout_marginStart="77dp"
+        android:layout_marginTop="184dp"
+        android:layout_marginEnd="77dp"
+        android:foregroundGravity="center_horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.95"
+        app:layout_constraintStart_toStartOf="@id/alarmClock"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/oyasumi_time_background" />
+
+    <ImageView
+        android:id="@+id/alarm_cloud1"
+        android:layout_width="229dp"
+        android:layout_height="354dp"
+        android:layout_marginTop="76dp"
+        android:layout_marginBottom="14dp"
+        app:layout_constraintBottom_toBottomOf="@+id/saveAlarmButton"
+        app:layout_constraintTop_toTopOf="@+id/alarmTimeBackground"
+        app:srcCompat="@drawable/oyasumi_alarm_cloud"
+        tools:layout_editor_absoluteX="-13dp" />
+
+    <ImageView
+        android:id="@+id/alarm_cloud2"
+        android:layout_width="250dp"
+        android:layout_height="374dp"
+        android:layout_marginStart="199dp"
+        android:layout_marginBottom="54dp"
+        app:layout_constraintBottom_toBottomOf="@+id/alarmTimeBackground"
+        app:layout_constraintStart_toStartOf="@+id/alarmClock"
+        app:srcCompat="@drawable/oyasumi_alarm_cloud" />
+
+    <ImageView
+        android:id="@+id/alarm_star1"
+        android:layout_width="102dp"
+        android:layout_height="108dp"
+        android:layout_marginBottom="20dp"
+        app:layout_constraintBottom_toTopOf="@+id/alarmTimeBackground"
+        app:srcCompat="@drawable/oyasumi_alarm_star_1"
+        tools:layout_editor_absoluteX="81dp" />
+
+    <ImageView
+        android:id="@+id/alarm_star2"
+        android:layout_width="79dp"
+        android:layout_height="68dp"
+        android:layout_marginBottom="1dp"
+        app:layout_constraintBottom_toTopOf="@+id/cancelAlarmButton"
+        app:srcCompat="@drawable/oyasumi_alarm_star_2"
+        tools:layout_editor_absoluteX="336dp" />
+
+    <ImageView
+        android:id="@+id/alarm_star3"
+        android:layout_width="166dp"
+        android:layout_height="119dp"
+        android:layout_marginStart="40dp"
+        app:layout_constraintBottom_toTopOf="@+id/alarm_star2"
+        app:layout_constraintStart_toEndOf="@+id/alarm_cloud1"
+        app:srcCompat="@drawable/oyasumi_alarm_star_1" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

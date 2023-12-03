@@ -17,6 +17,8 @@ public class LoadingScreenActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_loading_screen);
 
+        getSupportActionBar().hide();
+
         ExampleRunnable runnable = new ExampleRunnable();
         new Thread(runnable).start();
 

@@ -17,6 +17,7 @@ import android.os.Bundle;
 import android.os.Looper;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
@@ -48,6 +49,16 @@ public class AlarmActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_alarm);
+
+        getSupportActionBar().hide();
+
+        //reorder the views
+        sendViewToBack(findViewById(R.id.alarm_cloud1));
+        sendViewToBack(findViewById(R.id.alarm_cloud2));
+        sendViewToBack(findViewById(R.id.alarm_star1));
+        sendViewToBack(findViewById(R.id.alarm_star2));
+        sendViewToBack(findViewById(R.id.alarmTimeBackground));
+        sendViewToBack(findViewById(R.id.alarm_star3));
 
         requestNotificationPermission();
     }
@@ -107,5 +118,13 @@ public class AlarmActivity extends AppCompatActivity {
     public void openDialog() {
         NoAlarmAlertDialog dialog = new NoAlarmAlertDialog();
         dialog.show(getSupportFragmentManager(), "no alarm set dialog");
+    }
+
+    public static void sendViewToBack(final View child) {
+        final ViewGroup parent = (ViewGroup)child.getParent();
+        if (null != parent) {
+            parent.removeView(child);
+            parent.addView(child, 0);
+        }
     }
 }

@@ -2,4 +2,8 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="oyasumi_lavender">#B1A9E5</color>
+    <color name="clock_hand_lavender">#7d77a3</color>
+    <color name="oyasumi_dark_purple">#780E9A</color>
+    <color name="alarm_background">#e2dff5</color>
 </resources>
