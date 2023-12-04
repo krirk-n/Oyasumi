@@ -39,7 +39,7 @@ import java.util.Map;
 public class ChatGPTActivity extends AppCompatActivity {
     private TextView textView;
     private String stringURLEndPoint = "https://api.openai.com/v1/chat/completions";
-    private String stringAPIKey = "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";
+    private String stringAPIKey = "APIKEY";
     private String stringOutput = "";
 
     @Override
