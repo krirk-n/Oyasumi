@@ -4,6 +4,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class DBHelper {
     static SQLiteDatabase sqLiteDatabase;
@@ -44,8 +45,17 @@ public class DBHelper {
         sqLiteDatabase.close();
         return notesList;
     }
-    public void saveNote(int noteId, String date, int sleepDuration, String sleepQuality, String dreamNote,
+    public void saveNote(int noteId, String date, int sleepDuration, String dreamNote,
                          String dreamInterpret, String additionalNote) {
+        ArrayList<String> sleepQualityTypes = new ArrayList<>(Arrays.asList("poor", "fine", "excellent"));
+        String sleepQuality = "";
+        if (sleepDuration < 21600) {
+            sleepQuality = sleepQualityTypes.get(0);
+        } else if (21600 <= sleepDuration && sleepDuration < 28800) {
+            sleepQuality = sleepQualityTypes.get(1);
+        } else {
+            sleepQuality = sleepQualityTypes.get(2);
+        }
         createTable();
         sqLiteDatabase.execSQL("INSERT INTO notes (noteId, date, sleepDuration, sleepQuality, dreamNote, dreamInterpret, additionalNote) VALUES (?, ?, ?, ?, ?, ?, ?)",
                 new String[]{String.valueOf(noteId), date, String.valueOf(sleepDuration), sleepQuality, dreamNote, dreamInterpret, additionalNote});

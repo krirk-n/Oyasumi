@@ -3,7 +3,14 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/alarmClockMenuItem"
-        android:title="alarmClockMenuItem"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:icon="@drawable/alarm_icon"
+        android:title="alarmClockMenuItem"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/summaryMenuItem"
+        android:icon="@drawable/graph_statistics_icon"
+        android:title="summaryMenuItem"
         app:showAsAction="ifRoom" />
 </menu>

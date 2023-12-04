@@ -194,7 +194,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void createDummyNotes(int num) {
-        ArrayList<String> sleepQualityTypes = new ArrayList<>(Arrays.asList("poor", "fine", "excellent")) ;
         Context context = getApplicationContext();
         SQLiteDatabase sqLiteDatabase = context.openOrCreateDatabase("notes", Context.MODE_PRIVATE, null);
         for (int i=1; i <= num; i++ ) {
@@ -205,10 +204,9 @@ public class MainActivity extends AppCompatActivity {
             int notesSize = notes.size();
             int noteId = notesSize + 1;
             Random random = new Random();
-            String sleepQuality = sleepQualityTypes.get(random.nextInt(3));
             sqLiteDatabase = context.openOrCreateDatabase("notes", Context.MODE_PRIVATE, null);
             dbHelper = new DBHelper(sqLiteDatabase);
-            dbHelper.saveNote(noteId, date, 20000 + random.nextInt(20000), sleepQuality,
+            dbHelper.saveNote(noteId, date, 20000 + random.nextInt(20000),
                     "Dummy is dreaming" + noteId, "","This is a dummy " + noteId);
         }
     }
@@ -293,7 +291,10 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(this, AlarmActivity.class);
             startActivity(intent);
             return true;
-
+        } else if (itemId == R.id.summaryMenuItem) {
+            Intent intent = new Intent(this, DetailActivity.class);
+            startActivity(intent);
+            return true;
         }
         return super.onOptionsItemSelected(item);
     }

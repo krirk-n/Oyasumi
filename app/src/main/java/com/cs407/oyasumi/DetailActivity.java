@@ -1,9 +1,11 @@
-package project.sleep;
+package com.cs407.oyasumi;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
@@ -24,19 +26,20 @@ import com.github.mikephil.charting.formatter.ValueFormatter;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.StringTokenizer;
 
 public class DetailActivity extends AppCompatActivity {
-    private long[] sleepTimeS = new long[5];
-    private long[] sleepTimeM = new long[5];
-    private long[] sleepTimeH = new long[5];
-    private String[] date = new String[5];;
+    private int notesSize = 0;
+    private ArrayList<Integer> sleepDuration = new ArrayList<Integer>();
+    private ArrayList<String> dates = new ArrayList<String>();
     private String[] startTime = new String[5];
     private String[] endTime = new String[5];
-    private String FILENAME = "sleepData.txt";
 
     @SuppressLint("SetTextI18n")
     @Override
@@ -44,74 +47,20 @@ public class DetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
 
-        /*Intent intent = getIntent();
-        date = intent.getStringExtra("date");
-        if(date == null) {
-            date = "11/30/2023";
-        }
-        sleepTimeH = intent.getLongExtra("sleepTimeH", 0);
-        sleepTimeM = intent.getLongExtra("sleepTimeM", 0);
-        sleepTimeS = intent.getLongExtra("sleepTimeS", 0);
-        startTime = intent.getStringExtra("startTime");
-        endTime = intent.getStringExtra("endTime");*/
+        Context context = getApplicationContext();
+        SQLiteDatabase sqLiteDatabase = context.openOrCreateDatabase("notes", Context.MODE_PRIVATE, null);
+        DBHelper dbHelper = new DBHelper(sqLiteDatabase);
+        ArrayList<Note> notes = dbHelper.readNotes();
+        notesSize = notes.size();
 
-        for(int i = 0; i < 5; i++) {
-            date[i] = "00/00/0000";
-        }
-
-        FileInputStream fis = null;
-        int i = 0;
-        try {
-            fis = openFileInput(FILENAME);
-            byte[] buffer = new byte[fis.available()];
-            fis.read(buffer);
-
-            System.out.println("Sleep " + new String(buffer));
-            StringTokenizer st = new StringTokenizer(new String(buffer), "\0");
-            int maxCount = st.countTokens();
-            int count = 0;
-
-            while(st.hasMoreTokens()) {
-                count = st.countTokens();
-                if(count != maxCount && count % 6 == 0) {
-                    i++;
-                }
-
-                date[i] = st.nextToken();
-                sleepTimeH[i] = Long.parseLong(st.nextToken());
-                sleepTimeM[i] = Long.parseLong(st.nextToken());
-                sleepTimeS[i] = Long.parseLong(st.nextToken());
-                startTime[i] = st.nextToken();
-                endTime[i] = st.nextToken();
-            }
-
-            fis.close();
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        for(int i = 0; i < notesSize; i++) {
+            dates.add(notes.get(i).getDate().substring(0,8));
+            sleepDuration.add(notes.get(i).getSleepDuration());
         }
 
         BarChart bc = (BarChart) findViewById(R.id.chart);
         this.initBarChart(bc);
         this.setChartData(bc);
-
-        TextView tvSleepTime = (TextView) findViewById(R.id.tvSleepTime2);
-        TextView tvSleepQuality = (TextView) findViewById(R.id.tvSleepQuality2);
-        TextView tvTimeInBed  = (TextView) findViewById(R.id.tvTimeInBed2);
-
-        tvSleepTime.setText("Sleep time = " + startTime[i] + " - " + endTime[i]);
-
-        long sleepTime = sleepTimeS[i] + (sleepTimeM[i] * 60) + (sleepTimeH[i] * 60 * 60);
-        tvSleepQuality.setText("Sleep quality = " + String.format("%3.3f", (sleepTime * 100.000f / (8.000f * 60.000f * 60.000f))) + "%");
-
-        if(sleepTimeH[i] > 0) {
-            tvTimeInBed.setText("Time in bed : " + sleepTimeH[i] + "hours " + sleepTimeM[i] + "mins " + sleepTimeS[i] + "secs");
-        } else if(sleepTimeM[i] > 0) {
-            tvTimeInBed.setText("Time in bed : " + sleepTimeM[i] + "mins " + sleepTimeS[i] + "secs");
-        } else {
-            tvTimeInBed.setText("Time in bed : " + sleepTimeS[i] + " secs");
-        }
 
         Button btBack = (Button) findViewById(R.id.btBack);
         btBack.setOnClickListener(new View.OnClickListener() {
@@ -154,8 +103,7 @@ public class DetailActivity extends AppCompatActivity {
         // 격자선 설정 (default = true)
         xAxis.setDrawGridLines(false);
 
-        List<String> xAxisValues = new ArrayList<>(Arrays.asList(
-                date[0].substring(0,5), date[1].substring(0,5), date[2].substring(0,5), date[3].substring(0,5), date[4].substring(0,5)));
+        List<String> xAxisValues = dates;
         xAxis.setValueFormatter(new com.github.mikephil.charting.formatter.IndexAxisValueFormatter(xAxisValues));
 
         YAxis leftAxis = barChart.getAxisLeft();
@@ -194,15 +142,13 @@ public class DetailActivity extends AppCompatActivity {
         barChart.setScaleEnabled(false);
 
         ArrayList<BarEntry> valueList = new ArrayList<BarEntry>();
-        String title = "Date";
+        String title = "Sleep Summary";
 
-
-
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < notesSize; i++) {
             //valueList.add(new BarEntry((float)i, i * 100f));
             //valueList.add(new BarEntry((float)i, i * 3f));
-            float sleepTime = (sleepTimeS[i] / 60f) + (sleepTimeM[i]) + (sleepTimeH[i] * 60);
-            valueList.add(new BarEntry((float)i, sleepTime));
+            float sleepTime = (float)sleepDuration.get(i) / 3600;
+            valueList.add(new BarEntry(i, sleepTime));
         }
 
         BarDataSet barDataSet = new BarDataSet(valueList, title);
