@@ -38,6 +38,7 @@ public class DetailActivity extends AppCompatActivity {
     private int notesSize = 0;
     private ArrayList<Integer> sleepDuration = new ArrayList<Integer>();
     private ArrayList<String> dates = new ArrayList<String>();
+    ArrayList<Integer> colors = new ArrayList<Integer>();
     private String[] startTime = new String[5];
     private String[] endTime = new String[5];
 
@@ -56,6 +57,15 @@ public class DetailActivity extends AppCompatActivity {
         for(int i = 0; i < notesSize; i++) {
             dates.add(notes.get(i).getDate().substring(0,8));
             sleepDuration.add(notes.get(i).getSleepDuration());
+            int color = 0;
+            if (notes.get(i).getSleepQuality().equals("poor")) {
+                color = Color.rgb(255,0,0);
+            } else if (notes.get(i).getSleepQuality().equals("fine")) {
+                color = Color.rgb(255,255,0);
+            } else {
+                color = Color.rgb(0,255,0);
+            }
+            colors.add(color);
         }
 
         BarChart bc = (BarChart) findViewById(R.id.chart);
@@ -153,9 +163,7 @@ public class DetailActivity extends AppCompatActivity {
 
         BarDataSet barDataSet = new BarDataSet(valueList, title);
         // 바 색상 설정 (ColorTemplate.LIBERTY_COLORS)
-        barDataSet.setColors(
-                Color.rgb(207, 248, 246), Color.rgb(148, 212, 212), Color.rgb(136, 180, 187),
-                Color.rgb(118, 174, 175), Color.rgb(42, 109, 130));
+        barDataSet.setColors(colors);
 
         BarData data = new BarData(barDataSet);
         barChart.setData(data);
