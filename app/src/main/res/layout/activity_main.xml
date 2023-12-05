@@ -7,6 +7,28 @@
     android:background="@drawable/note_bg"
     tools:context=".MainActivity">
 
+    <TextView
+        android:id="@+id/dateTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="50dp"
+        android:layout_marginTop="10dp"
+        android:text="Date: XX/XX/XXXX"
+        android:textSize="20sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/sleepButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="200dp"
+        android:layout_marginTop="50dp"
+        android:clickable="true"
+        android:text="Start Sleeping"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/prevFloatingActionButton"
         android:layout_width="wrap_content"
@@ -30,19 +52,12 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
-        android:id="@+id/sleepButton"
+    <ScrollView
+        android:id="@+id/scrollView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="140dp"
-        android:layout_marginTop="120dp"
-        android:text="Start Sleeping"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" >
+        app:layout_constraintTop_toTopOf="parent">
 
         <LinearLayout
             android:id="@+id/linearLayout"
@@ -51,15 +66,9 @@
             android:isScrollContainer="true"
             android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/dateTextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="52dp"
-                android:layout_marginTop="25dp"
-                android:layout_marginBottom="29dp"
-                android:text="Date: XX/XX/XXXX"
-                android:textSize="20sp" />
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="58dp" />
 
             <TextView
                 android:id="@+id/introTextView"

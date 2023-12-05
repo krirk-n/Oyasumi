@@ -5,6 +5,7 @@
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.USE_EXACT_ALARM" />
     <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -16,13 +17,18 @@
         android:theme="@style/Theme.Oyasumi"
         tools:targetApi="31">
         <activity
+            android:name=".SleepingActivity"
+            android:theme="@style/Theme.AppCompat.NoActionBar"
+            android:exported="false" />
+        <activity
             android:name=".ChatGPTActivity"
             android:exported="false" />
         <activity
             android:name=".MainActivity"
             android:exported="true">
-			<intent-filter>
+            <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -31,15 +37,17 @@
             android:exported="false" />
         <activity
             android:name=".LoadingScreenActivity"
-			android:exported="true">
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
             android:name=".DetailActivity"
-            android:exported="false" />            
+            android:exported="false" />
+
         <receiver android:name=".AlarmReceiver" />
     </application>
 

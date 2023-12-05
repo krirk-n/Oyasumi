@@ -15,6 +15,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -23,6 +24,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Random;
 
@@ -55,7 +57,10 @@ public class MainActivity extends AppCompatActivity {
     FloatingActionButton nextFloatingActionButton;
     Button sleepButton;
     Button interpretButton;
+    ScrollView scrollView;
     Note currentNote;
+    SharedPreferences sharedPreferences;
+    SharedPreferences sharedPreferences2;
     private int currentPage = -1;
     private int notesSize = 0;
     private String stringURLEndPoint = "https://api.openai.com/v1/chat/completions";
@@ -68,7 +73,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         //alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        SharedPreferences sharedPreferences = getSharedPreferences("oyasumi_alarm_data", Context.MODE_PRIVATE);
+        sharedPreferences = getSharedPreferences("oyasumi_alarm_data", Context.MODE_PRIVATE);
+        sharedPreferences2 = getSharedPreferences("startTime", Context.MODE_PRIVATE);
         int hour = sharedPreferences.getInt("hour", -1);
         int minute = sharedPreferences.getInt("minute", -1);
         if((hour == -1)||(minute == -1))
@@ -78,7 +84,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         Context context = getApplicationContext();
-        createDummyNotes(3);
+//        createDummyNotes(3);
 
         prevFloatingActionButton = (FloatingActionButton) findViewById(R.id.prevFloatingActionButton);
         nextFloatingActionButton = (FloatingActionButton) findViewById(R.id.nextFloatingActionButton);
@@ -90,6 +96,26 @@ public class MainActivity extends AppCompatActivity {
         dreamEditText = (EditText) findViewById(R.id.dreamEditText);
         additionEditText = (EditText) findViewById(R.id.additionEditText);
         interpretTextView = (TextView) findViewById(R.id.interpretTextView);
+        scrollView = (ScrollView) findViewById(R.id.scrollView);
+        sleepButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                long currentSecond = System.currentTimeMillis() / 1000;
+                Log.d("current second", String.valueOf(currentSecond));
+                SharedPreferences.Editor editor = sharedPreferences2.edit();
+                editor.putLong("startSecond", currentSecond);
+                editor.apply();
+                Log.d("SharedPref","startSecond: " + sharedPreferences2.getLong("startSecond", -1));
+                DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+                String currentDate = dateFormat.format(new Date());
+                Log.d("current date", currentDate);
+                editor.putString("startDate", currentDate);
+                editor.apply();
+                Log.d("SharedPref","startDate: " + sharedPreferences2.getString("startDate", "no"));
+                Intent intent = new Intent(MainActivity.this, SleepingActivity.class);
+                startActivity(intent);
+            }
+        });
 
         prevFloatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -210,6 +236,7 @@ public class MainActivity extends AppCompatActivity {
                     "Dummy is dreaming" + noteId, "","This is a dummy " + noteId);
         }
     }
+
     public void buttonChatGPT(View view){
         JSONObject jsonObject = new JSONObject();
         interpretTextView.setText("loading...");
