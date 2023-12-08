@@ -10,7 +10,7 @@
         app:showAsAction="ifRoom" />
     <item
         android:id="@+id/summaryMenuItem"
-        android:icon="@drawable/graph_statistics_icon"
+        android:icon="@drawable/baseline_bar_chart_24"
         android:title="summaryMenuItem"
         app:showAsAction="ifRoom" />
 </menu>

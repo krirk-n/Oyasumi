@@ -25,7 +25,8 @@
         android:layout_marginStart="200dp"
         android:layout_marginTop="50dp"
         android:clickable="true"
-        android:text="Start Sleeping"
+        android:text="START SLEEPING"
+        android:backgroundTint="@color/oyasumi_lavender"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -116,7 +117,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="50dp"
                 android:onClick="buttonChatGPT"
-                android:text="Interpret it!" />
+                android:backgroundTint="@color/oyasumi_lavender"
+                android:text="INTERPRET IT!" />
 
             <TextView
                 android:id="@+id/interpretTextView"

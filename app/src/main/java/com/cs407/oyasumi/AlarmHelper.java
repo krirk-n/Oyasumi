@@ -5,9 +5,13 @@ import android.annotation.SuppressLint;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.media.AudioAttributes;
+import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Build;
 import android.util.Log;
@@ -27,6 +31,8 @@ public class AlarmHelper {
 
     private static final Calendar calendar = Calendar.getInstance();
 
+    private static NotificationChannel channel;
+
     private static final int ARGB = 1217141249;
 
 
@@ -44,8 +50,14 @@ public class AlarmHelper {
 
             //int importance = NotificationManager.IMPORTANCE_DEFAULT; //notif goes directly into drawer without popping up
             int importance = NotificationManager.IMPORTANCE_HIGH; //changed this for debugging purposes
-            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
+            channel = new NotificationChannel(CHANNEL_ID, name, importance);
             channel.setDescription(description);
+            Uri uri = Uri.parse("android.resource://" + context.getPackageName() + "/" + R.raw.ringtone);
+            AudioAttributes audioAttributes = new AudioAttributes.Builder()
+                    .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                    .setUsage(AudioAttributes.USAGE_NOTIFICATION)
+                    .build();
+            channel.setSound(uri,audioAttributes);
 
             //register the NotificationChannel object with the android system
             NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
@@ -63,30 +75,29 @@ public class AlarmHelper {
     }
 
     public void showAlarmNotification(Context context) {
+        AudioManager audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
+        //unmute notification stream
+        audioManager.setStreamVolume(AudioManager.STREAM_NOTIFICATION, AudioManager.ADJUST_UNMUTE, AudioManager.FLAG_SHOW_UI); //, AudioManager.FLAG_PLAY_SOUND);
+
         //if we do not have permission to show notifications, we cannot execute this function
         if (ActivityCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS)
                 != PackageManager.PERMISSION_GRANTED) {
             Log.i("info", "AlarmHelper: notification permissions not granted, cannot show alarm");
             return;
         }
-        //TODO potentially create pending intent here to open new activity when user taps on notification
-        //TODO if so, need to uncomment line 77
-
+        Intent alarmDisplay = new Intent(context, AlarmDisplayActivity.class); //, Intent.FLAG_ACTIVITY_NEW_TASK);
+        alarmDisplay.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        PendingIntent pendingAlarmDisplay = PendingIntent.getActivity(context, 0,alarmDisplay, PendingIntent.FLAG_IMMUTABLE);
+        //PendingIntent pendingAlarmDislay = new PendingIntent(context, 0, alarmDisplay, PendingIntent.FLAG_IMMUTABLE);
         //create the notification
-        @SuppressLint("RemoteViewLayout") RemoteViews customAlarmView = new RemoteViews(context.getPackageName(), R.layout.alarm_notification_layout);
-       // Uri soundUri = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://"+ context.getApplicationContext().getPackageName() + "/" + R.raw.mysound);
         Log.i("info", "AlarmHelper: building the alarm notification");
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
-                .setSmallIcon(R.drawable.ic_launcher_background)
-                //.setContentTitle("oyasumi alarm notification")
-                //.setContentText("time to wake up")
-                .setContent(customAlarmView)
-                //.setAutoCancel(true) //when user clicks on notification, it can be canceled
-                //.setDefaults(Notification.DEFAULT_ALL)
-                .setLights(ARGB, 10, 10)
-               // .setSound() //TODO can set a stream as well
-                .setPriority(NotificationCompat.PRIORITY_HIGH);
-        //.setContentIntent(pendingIntent);
+                .setSmallIcon(R.drawable.oyasumi_logo_ver1_cropped)
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setContentTitle("oyasumi alarm notification")
+                .setContentText("time to wake up")
+                .setAutoCancel(true) //when user clicks on notification, it can be canceled
+                .setFullScreenIntent(pendingAlarmDisplay, true);
 
         //use a notification manager to build the created notification
         NotificationManagerCompat notificationmanagerCompat = NotificationManagerCompat.from(context);

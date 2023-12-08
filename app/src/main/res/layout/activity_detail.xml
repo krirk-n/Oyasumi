@@ -38,7 +38,8 @@
                 android:id="@+id/btBack"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Back" />
+                android:text="BACK"
+                android:backgroundTint="@color/oyasumi_lavender"/>
         </LinearLayout>
 
         <!-- <CalendarView

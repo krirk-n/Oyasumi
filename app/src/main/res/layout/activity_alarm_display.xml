@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/alarm_background"
+    tools:context=".AlarmDisplayActivity">
+
+    <TextView
+        android:id="@+id/wakeUpTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="111dp"
+        android:layout_marginBottom="57dp"
+        android:gravity="center_horizontal"
+        android:text="TimeHere"
+        android:textColor="@color/alarm_background"
+        android:textSize="95dp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/wakeUpCloud1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/wakeUpBackgroundImage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@+id/wakeUpText"
+        app:layout_constraintEnd_toEndOf="@+id/wakeUpCloud1"
+        app:srcCompat="@drawable/oyasumi_time_background" />
+
+    <TextView
+        android:id="@+id/wakeUpText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="cursive"
+        android:text="Time To Wake Up..."
+        android:textSize="40dp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/wakeUpCloud1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <ImageView
+        android:id="@+id/wakeUpCloud1"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="1dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/wakeUpCloud2"
+        app:layout_constraintTop_toBottomOf="@+id/wakeUpTime"
+        app:srcCompat="@drawable/oyasumi_alarm_cloud" />
+
+    <ImageView
+        android:id="@+id/wakeUpCloud2"
+        android:layout_width="0dp"
+        android:layout_height="127dp"
+        android:layout_marginStart="35dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/wakeUpCloud1"
+        app:layout_constraintHorizontal_bias="0.156"
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@drawable/oyasumi_alarm_cloud" />
+
+    <ImageView
+        android:id="@+id/wakeUpStar"
+        android:layout_width="119dp"
+        android:layout_height="264dp"
+        app:layout_constraintBottom_toTopOf="@+id/wakeUpCloud2"
+        app:layout_constraintEnd_toStartOf="@+id/wakeUpCloud1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/wakeUpBackgroundImage"
+        app:srcCompat="@drawable/oyasumi_alarm_star_1" />
+
+    <Button
+        android:id="@+id/wakeUpDismissButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:backgroundTint="@color/oyasumi_lavender"
+        android:onClick="dismissAlarm"
+        android:text="DISMISS"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/wakeUpBackgroundImage" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
