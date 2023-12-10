@@ -12,8 +12,10 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.media.AudioAttributes;
 import android.media.AudioManager;
+import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
+import android.os.PowerManager;
 import android.util.Log;
 import android.widget.RemoteViews;
 
@@ -32,6 +34,8 @@ public class AlarmHelper {
     private static final Calendar calendar = Calendar.getInstance();
 
     private static NotificationChannel channel;
+
+    private static int notificationIdIndex = 0;
 
     private static final int ARGB = 1217141249;
 
@@ -53,6 +57,7 @@ public class AlarmHelper {
             channel = new NotificationChannel(CHANNEL_ID, name, importance);
             channel.setDescription(description);
             Uri uri = Uri.parse("android.resource://" + context.getPackageName() + "/" + R.raw.ringtone);
+            //Uri uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
             AudioAttributes audioAttributes = new AudioAttributes.Builder()
                     .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
                     .setUsage(AudioAttributes.USAGE_NOTIFICATION)
@@ -75,6 +80,8 @@ public class AlarmHelper {
     }
 
     public void showAlarmNotification(Context context) {
+        PowerManager powerManager = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
+
         AudioManager audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
         //unmute notification stream
         audioManager.setStreamVolume(AudioManager.STREAM_NOTIFICATION, AudioManager.ADJUST_UNMUTE, AudioManager.FLAG_SHOW_UI); //, AudioManager.FLAG_PLAY_SOUND);
@@ -85,22 +92,27 @@ public class AlarmHelper {
             Log.i("info", "AlarmHelper: notification permissions not granted, cannot show alarm");
             return;
         }
-        Intent alarmDisplay = new Intent(context, AlarmDisplayActivity.class); //, Intent.FLAG_ACTIVITY_NEW_TASK);
-        alarmDisplay.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        PendingIntent pendingAlarmDisplay = PendingIntent.getActivity(context, 0,alarmDisplay, PendingIntent.FLAG_IMMUTABLE);
-        //PendingIntent pendingAlarmDislay = new PendingIntent(context, 0, alarmDisplay, PendingIntent.FLAG_IMMUTABLE);
+
         //create the notification
         Log.i("info", "AlarmHelper: building the alarm notification");
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
-                .setSmallIcon(R.drawable.oyasumi_logo_ver1_cropped)
+                .setSmallIcon(R.drawable.alarm_notif_icon)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setContentTitle("oyasumi alarm notification")
                 .setContentText("time to wake up")
-                .setAutoCancel(true) //when user clicks on notification, it can be canceled
-                .setFullScreenIntent(pendingAlarmDisplay, true);
+                .setAutoCancel(true); //when user clicks on notification, it can be canceled
+
+        //if the screen is off, use a full screen intent
+        if(!powerManager.isInteractive()) {
+            Intent alarmDisplay = new Intent(context, AlarmDisplayActivity.class); //, Intent.FLAG_ACTIVITY_NEW_TASK);
+            alarmDisplay.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            PendingIntent pendingAlarmDisplay = PendingIntent.getActivity(context, 0,alarmDisplay, PendingIntent.FLAG_IMMUTABLE);
+            builder.setFullScreenIntent(pendingAlarmDisplay, true);
+        }
 
         //use a notification manager to build the created notification
         NotificationManagerCompat notificationmanagerCompat = NotificationManagerCompat.from(context);
-        notificationmanagerCompat.notify(123, builder.build());
+        notificationmanagerCompat.notify(123 + notificationIdIndex, builder.build());
+        notificationIdIndex++;
     }
 }
