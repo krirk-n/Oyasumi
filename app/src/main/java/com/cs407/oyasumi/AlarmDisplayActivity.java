@@ -56,7 +56,7 @@ public class AlarmDisplayActivity extends AppCompatActivity {
         // Mute the notification stream
         audioManager.setStreamVolume(AudioManager.STREAM_NOTIFICATION, 0, 0);
         //go to sleep activity
-        Intent intent = new Intent(this, SleepingActivity.class);
+        Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
     }
 
