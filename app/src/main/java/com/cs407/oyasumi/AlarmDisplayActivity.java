@@ -26,6 +26,8 @@ public class AlarmDisplayActivity extends AppCompatActivity {
         int hour = sharedPreferences.getInt("hour", -1);
         int minute = sharedPreferences.getInt("minute", -1);
 
+        getSupportActionBar().hide();
+
         //logic to convert the time to 24 hour clock
         String ampm = "";
         if (hour >= 12)

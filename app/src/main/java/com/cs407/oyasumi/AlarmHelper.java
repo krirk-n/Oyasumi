@@ -100,6 +100,7 @@ public class AlarmHelper {
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setContentTitle("oyasumi alarm notification")
                 .setContentText("time to wake up")
+                .setSound(null)
                 .setAutoCancel(true); //when user clicks on notification, it can be canceled
 
         //if the screen is off, use a full screen intent
