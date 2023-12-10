@@ -84,7 +84,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
         Context context = getApplicationContext();
-//        createDummyNotes(3);
 
         prevFloatingActionButton = (FloatingActionButton) findViewById(R.id.prevFloatingActionButton);
         nextFloatingActionButton = (FloatingActionButton) findViewById(R.id.nextFloatingActionButton);
@@ -151,7 +150,8 @@ public class MainActivity extends AppCompatActivity {
         DBHelper dbHelper = new DBHelper(sqLiteDatabase);
         ArrayList<Note> notes = dbHelper.readNotes();
         notesSize = notes.size();
-
+        if (notesSize == 0) createDummyNotes(4); // for the sake of demo
+        Log.d("notesSize", "size:" + notesSize);
         // Empty page for upcoming sleep
         checkButtons();
         DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
@@ -163,7 +163,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void checkButtons() {
-        prevFloatingActionButton.setEnabled(currentPage > 0 || currentPage == -1);
+        prevFloatingActionButton.setEnabled(notesSize != 0 && (currentPage > 0 || currentPage == -1));
         nextFloatingActionButton.setEnabled(currentPage != -1);
         if (currentPage == -1) {
             sleepButton.setVisibility(View.VISIBLE);
